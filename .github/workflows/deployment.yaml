@@ -7,6 +7,7 @@ on:
           - master
           - test
           - platform_installations
+          - platform_cleanup
 jobs:
     preparation:
 
@@ -30,8 +31,15 @@ jobs:
               run: |
                 cd ~
                 terraform apply --auto-approve
-                
-    
+    cleanup:
+
+        if: ${{ github.ref_name == 'platform_cleanup' }}
+        runs-on: self-hosted
+        steps: 
+          - name: remove the instance created by terraform
+            run: |
+              cd ~
+              terraform destroy --auto-approve
 
 
             
