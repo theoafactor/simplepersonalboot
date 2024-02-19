@@ -1,10 +1,12 @@
 name: site deployment
+
 on:
-    push:
-        branches:
-            - master
-            - test
-            - platform_installations
+  workflow_run:
+  push:
+      branches:
+          - master
+          - test
+          - platform_installations
 jobs:
     preparation:
 
