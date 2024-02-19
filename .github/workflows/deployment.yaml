@@ -8,10 +8,44 @@ on:
           - test
           - platform_installations
 jobs:
+    preparation:
+
+        if: ${{ github.ref_name == 'platform_installations' }}
+        runs-on: self-hosted
+        steps:
+            - name: checks out
+              uses: actions/checkout@v4
+
+            - name: install dependencies
+              run: bash _installations/install.sh
+
+            - name: setup aws cli
+              uses: aws-actions/configure-aws-credentials@v3
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+                aws-region: "eu-west-2"
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+
+            - name: "Apply terraform"
+              run: |
+                cd ~
+                terraform apply --auto-approve
+                
     cleanup:
         if: ${{ github.ref_name == 'platform_cleanup' }}
         runs-on: self-hosted
         steps: 
+          - name: checks out
+            uses: actions/checkout@v4
+
+          - name: setup aws cli
+            uses: aws-actions/configure-aws-credentials@v3
+            with:
+              aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+              aws-region: "eu-west-2"
+              aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+
+
           - name: "remove the instance created by terraform"
             run: |
               cd ~
