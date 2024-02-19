@@ -7,6 +7,7 @@ on:
           - master
           - test
           - platform_installations
+          - platform_cleanup
 jobs:
     preparation:
 
@@ -30,12 +31,23 @@ jobs:
               run: |
                 cd ~
                 terraform apply --auto-approve
+                
     cleanup:
-
         if: ${{ github.ref_name == 'platform_cleanup' }}
         runs-on: self-hosted
         steps: 
-          - name: remove the instance created by terraform
+          - name: checks out
+            uses: actions/checkout@v4
+
+          - name: setup aws cli
+            uses: aws-actions/configure-aws-credentials@v3
+            with:
+              aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+              aws-region: "eu-west-2"
+              aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+
+
+          - name: "remove the instance created by terraform"
             run: |
               cd ~
               terraform destroy --auto-approve
