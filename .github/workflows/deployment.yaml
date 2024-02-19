@@ -26,6 +26,11 @@ jobs:
                 aws-region: "eu-west-2"
                 aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
 
+            - name: "Apply terraform"
+              run: |
+                cd ~
+                terraform apply --auto-approve
+
             
 
 
